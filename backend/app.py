@@ -2,7 +2,7 @@
 
 """Test with Postman"""
 import pickle
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, request, jsonify
 import pandas as pd
 import numpy as np
 import cv2

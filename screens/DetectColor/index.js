@@ -22,10 +22,10 @@ import {
     images
 } from "../../constants";
 
-const ScanProduct = ({ navigation }) => {
+const DetectColor = ({ navigation }) => {
 
     // State
-    const [selectedOption, setSelectedOption] = React.useState(constants.scan_product_option.camera)
+    const [selectedOption, setSelectedOption] = React.useState(constants.detect_color_option.realtime)
 
     // Camera
     const devices = useCameraDevices();
@@ -51,7 +51,7 @@ const ScanProduct = ({ navigation }) => {
             <View
                 style={{
                     flexDirection: 'row',
-                    paddingTop: SIZES.padding * 2,
+                    paddingTop: SIZES.padding,
                     paddingBottom: SIZES.radius,
                     paddingHorizontal: SIZES.padding,
                     alignItems: 'center',
@@ -74,7 +74,7 @@ const ScanProduct = ({ navigation }) => {
                         ...FONTS.h2
                     }}
                 >
-                    {selectedOption == constants.scan_product_option.camera ? "Scan Camera" : "Scan QR Code"}
+                    {selectedOption == constants.detect_color_option.realtime ? "Realtime" : "Dokumen"}
                 </Text>
 
                 {/* Add. options */}
@@ -105,44 +105,44 @@ const ScanProduct = ({ navigation }) => {
             <View
                 style={{
                     flexDirection: 'row',
-                    height: 90,
+                    height: 75,
                     paddingTop: SIZES.radius,
                     paddingHorizontal: SIZES.radius,
                     backgroundColor: COLORS.light
                 }}
             >
                 <TextButton
-                    label="Scan QR Code"
+                    label="Realtime"
                     contentContainerStyle={{
                         flex: 1,
-                        height: 55,
+                        height: 50,
                         borderRadius: SIZES.radius,
-                        backgroundColor: selectedOption == constants.scan_product_option.qr ? COLORS.primary : COLORS.lightGrey
+                        backgroundColor: selectedOption == constants.detect_color_option.realtime ? COLORS.primary : COLORS.lightGrey
                     }}
                     labelStyle={{
                         ...FONTS.h3,
-                        color: selectedOption == constants.scan_product_option.qr ? COLORS.secondary : COLORS.primary
+                        color: selectedOption == constants.detect_color_option.realtime ? COLORS.secondary : COLORS.primary
                     }}
                     onPress={() => {
-                        setSelectedOption(constants.scan_product_option.qr)
+                        setSelectedOption(constants.detect_color_option.realtime)
                     }}
                 />
 
                 <TextButton
-                    label="Scan Camera"
+                    label="Dokumen"
                     contentContainerStyle={{
                         flex: 1,
-                        height: 55,
+                        height: 50,
                         marginLeft: SIZES.radius,
                         borderRadius: SIZES.radius,
-                        backgroundColor: selectedOption == constants.scan_product_option.camera ? COLORS.primary : COLORS.lightGrey
+                        backgroundColor: selectedOption == constants.detect_color_option.document ? COLORS.primary : COLORS.lightGrey
                     }}
                     labelStyle={{
                         ...FONTS.h3,
-                        color: selectedOption == constants.scan_product_option.camera ? COLORS.secondary : COLORS.primary
+                        color: selectedOption == constants.detect_color_option.document ? COLORS.secondary : COLORS.primary
                     }}
                     onPress={() => {
-                        setSelectedOption(constants.scan_product_option.camera)
+                        setSelectedOption(constants.detect_color_option.document)
                     }}
                 />
             </View>
@@ -165,10 +165,10 @@ const ScanProduct = ({ navigation }) => {
                     >
                         <Rect height="100%" width="100%" fill="#000" />
                         <Rect
-                            x="44%"
-                            y="46%"
-                            width="50"
-                            height="50"
+                            x="47%"
+                            y="48%"
+                            width="20"
+                            height="20"
                             fill="white"
                         />
                     </Mask>
@@ -183,11 +183,11 @@ const ScanProduct = ({ navigation }) => {
 
                 {/* Frame Border  */}
                 <Rect
-                    x="44%"
-                    y="46%"
-                    width="50"
-                    height="50"
-                    strokeWidth="4"
+                    x="47%"
+                    y="48%"
+                    width="20"
+                    height="20"
+                    strokeWidth="3"
                     stroke="#000"
                     fillOpacity="0"
                 />
@@ -218,8 +218,39 @@ const ScanProduct = ({ navigation }) => {
                         enableZoomGesture
                     />
 
-                    {/* QR Code  */}
-                    {selectedOption == constants.scan_product_option.qr  &&
+
+                    {/* Detect Button  */}
+                    {selectedOption == constants.detect_color_option.realtime &&
+                        <View
+                            style={{
+                                position: 'absolute',
+                                alignItems: 'center',
+                                bottom: SIZES.padding,
+                                left: 0,
+                                right: 0
+                            }}
+                        >
+                            <IconButton
+                                icon={icons.detect}
+                                containerStyle={{
+                                    height: 57,
+                                    width: 57,
+                                    borderRadius: 30,
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    backgroundColor: COLORS.light
+                                }}
+                                iconStyle={{
+                                    width: 65,
+                                    height: 65,
+                                    // tintColor: COLORS.primary
+                                }}
+                            />
+
+                        </View>
+                    }
+                    {/* Realtime  */}
+                    {selectedOption == constants.detect_color_option.realtime  &&
                         <View 
                             style={{
                                 position: 'absolute',
@@ -256,4 +287,4 @@ const ScanProduct = ({ navigation }) => {
 }
 
 
-export default ScanProduct;
+export default DetectColor;

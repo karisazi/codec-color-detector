@@ -63,9 +63,9 @@ const bottom_tabs = [
     }
 ]
 
-const scan_product_option = {
-    qr: "QR",
-    camera: "CAMERA"
+const detect_color_option = {
+    realtime: "REALTIME",
+    document: "DOCUMENT"
 }
 
 export default {
@@ -73,5 +73,5 @@ export default {
     home_tabs,
     dashboard_screens,
     bottom_tabs,
-    scan_product_option
+    detect_color_option
 }

@@ -31,6 +31,7 @@ const person2 = require('../assets/icons/person2.png');
 const phone = require('../assets/icons/phone.png');
 const question_mark = require('../assets/icons/question_mark.png');
 const scan = require('../assets/icons/scan.png');
+const detect = require('../assets/icons/detect.png');
 const google = require('../assets/icons/google.png');
 const twitter = require('../assets/icons/twitter.png');
 const linkedin = require('../assets/icons/linkedin.png');
@@ -71,6 +72,7 @@ export default {
     phone,
     question_mark,
     scan,
+    detect,
     google,
     twitter,
     linkedin,

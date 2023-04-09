@@ -4,8 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 
 import {
     Welcome,
-    Home,
-    ScanProduct
+    DetectColor
 } from "./screens";
 
 const Stack = createStackNavigator();
@@ -20,8 +19,7 @@ const App = () => {
                 initialRouteName={'Welcome'}
             >
                 <Stack.Screen name="Welcome" component={Welcome} />
-                <Stack.Screen name="Home" component={Home} />
-                <Stack.Screen name="ScanProduct" component={ScanProduct} />
+                <Stack.Screen name="DetectColor" component={DetectColor} />
 
             </Stack.Navigator>
         </NavigationContainer>

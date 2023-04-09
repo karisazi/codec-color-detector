@@ -44,7 +44,7 @@ const Welcome = ({ navigation }) => {
             <View
                 style={{
                     paddingHorizontal: SIZES.padding,
-                    marginBottom: 30
+                    marginBottom: 50
                 }}
             >
                 <TextButton
@@ -53,21 +53,9 @@ const Welcome = ({ navigation }) => {
                         borderRadius: SIZES.radius
                     }}
                     label="Get Started"
-                    onPress={() => navigation.navigate("Home")}
+                    onPress={() => navigation.navigate("DetectColor")}
                 />
 
-                <TextButton
-                    contentContainerStyle={{
-                        height: 50,
-                        marginTop: SIZES.base,
-                        backgroundColor: null
-                    }}
-                    label="Already have an account"
-                    labelStyle={{
-                        color: COLORS.primary
-                    }}
-                //onPress
-                />
             </View>
         </View>
     )

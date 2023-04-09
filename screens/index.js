@@ -1,9 +1,7 @@
 import Welcome from "./Walkthrough/Welcome";
-import Home from "./Home";
-import ScanProduct from "./ScanProduct";
+import DetectColor from "./DetectColor";
 
 export {
     Welcome,
-    Home,
-    ScanProduct
+    DetectColor
 }
