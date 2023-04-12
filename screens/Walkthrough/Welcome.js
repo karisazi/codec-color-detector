@@ -36,7 +36,7 @@ const Welcome = ({ navigation }) => {
                     Welcome to
                 </Text>
                 <Text style={{ marginTop: SIZES.base, ...FONTS.h1 }}>
-                    CoDec
+                    Codec
                 </Text>
             </View>
 
@@ -52,8 +52,8 @@ const Welcome = ({ navigation }) => {
                         height: 50,
                         borderRadius: SIZES.radius
                     }}
-                    label="Get Started"
-                    onPress={() => navigation.navigate("DetectColor")}
+                    label="Mulai"
+                    onPress={() => navigation.navigate("Realtime")}
                 />
 
             </View>

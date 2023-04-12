@@ -1,4 +1,5 @@
 import React from 'react';
+import 'react-native-reanimated';
 import {
     View,
     Text,
@@ -6,8 +7,17 @@ import {
     TouchableOpacity,
     Linking
 } from 'react-native';
-import { Camera, useCameraDevices } from 'react-native-vision-camera';
+import { MotiView, useAnimationState } from 'moti';
+import {
+    Camera,
+    CameraProps,
+    CameraRuntimeError,
+    FrameProcessorPerformanceSuggestion,
+    useCameraDevices,
+    useFrameProcessor,
+  } from 'react-native-vision-camera';
 import {Svg, Defs, Rect, Mask} from "react-native-svg";
+import Label, {Orientation} from "react-native-label";
 
 import {
     IconButton,
@@ -22,16 +32,36 @@ import {
     images
 } from "../../constants";
 
-const DetectColor = ({ navigation }) => {
+
+const Realtime = ({ navigation }) => {
 
     // State
     const [selectedOption, setSelectedOption] = React.useState(constants.detect_color_option.realtime)
 
+    const [detectButtonClicked, setDetectButtonClicked] = React.useState(false)
+
+    const [color, setColor] = React.useState("")
+
+    console.debug(detectButtonClicked);
     // Camera
     const devices = useCameraDevices();
     const device = devices.back;
 
+    // Moti
+    const loaderAnimationState = useAnimationState({
+        start: {
+            opacity: 1
+        },
+        stop: {
+            opacity: 0
+        }
+    })
+
     React.useEffect(() => {
+        // Animation
+        loaderAnimationState.transitionTo("stop")
+
+        // Permission
         requestCameraPermission()
     }, [])
 
@@ -43,6 +73,31 @@ const DetectColor = ({ navigation }) => {
         if (permission === 'denied') await Linking.openSettings()
     }, [])
 
+
+    function detectColor(frame) {
+        'worklet';
+        return __detectColor(frame);
+      }
+
+
+    const frameProcessor = useFrameProcessor(
+        frame => {
+          'worklet';
+          if (detectButtonClicked == false) {
+            // handbrake
+            return;
+          }
+          const result = detectColor(frame);
+
+          if (result == null) {
+            return;
+          }
+          setColor(result)
+
+        },
+        [detectButtonClicked],
+      );
+      
     // Render
 
     function renderHeader() {
@@ -216,23 +271,52 @@ const DetectColor = ({ navigation }) => {
                         device={device}
                         isActive={true}
                         enableZoomGesture
+                        frameProcessor={frameProcessor}
+                        frameProcessorFps={5}
                     />
+
+                    {/* Display color  */}
+                    <MotiView
+                        state={loaderAnimationState}
+                        style={{
+                            position: 'absolute',
+                            alignItems: 'center',
+                            top: SIZES.padding,
+                            left: 0,
+                            right: 0
+                        }}
+                    >
+                        <Text 
+                            style={{
+                                backgroundColor: 'blue', 
+                                marginLeft:10, alignSelf: 'flex-start', 
+                                color: "white", 
+                                fontSize:20
+                            }}
+                        >
+                                {color} Ketan 
+                        </Text>
+                        
+                    </MotiView>
 
 
                     {/* Detect Button  */}
                     {selectedOption == constants.detect_color_option.realtime &&
+       
                         <View
                             style={{
                                 position: 'absolute',
                                 alignItems: 'center',
-                                bottom: SIZES.padding,
+                                bottom: SIZES.padding*9,
                                 left: 0,
                                 right: 0
                             }}
                         >
+                            <CameraFrame/>
                             <IconButton
                                 icon={icons.detect}
                                 containerStyle={{
+                                    top: 140,
                                     height: 57,
                                     width: 57,
                                     borderRadius: 30,
@@ -243,26 +327,24 @@ const DetectColor = ({ navigation }) => {
                                 iconStyle={{
                                     width: 65,
                                     height: 65,
-                                    // tintColor: COLORS.primary
+                                    tintColor: COLORS.primary
+                                }}
+                                onPress={() => {
+                                    setDetectButtonClicked(true)
+                                    setColor("cek")
+                                    loaderAnimationState.transitionTo("start")
+
+                                    setTimeout(() => {
+                                        loaderAnimationState.transitionTo("stop")
+                                    }, 3000)
                                 }}
                             />
+                            {/* <CameraFrame/> */}
 
                         </View>
+                        
                     }
-                    {/* Realtime  */}
-                    {selectedOption == constants.detect_color_option.realtime  &&
-                        <View 
-                            style={{
-                                position: 'absolute',
-                                top: 0,
-                                left: 0,
-                                right: 0,
-                                bottom: 0
-                            }}
-                        >
-                            <CameraFrame/>
-                        </View>
-                    }
+
                 </View>
             )
         }
@@ -287,4 +369,4 @@ const DetectColor = ({ navigation }) => {
 }
 
 
-export default DetectColor;
+export default Realtime;

@@ -1,7 +1,7 @@
 import Welcome from "./Walkthrough/Welcome";
-import DetectColor from "./DetectColor";
+import Realtime from "./Realtime";
 
 export {
     Welcome,
-    DetectColor
+    Realtime
 }
