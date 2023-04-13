@@ -83,17 +83,19 @@ public class ColorFrameProcessorPlugin extends FrameProcessorPlugin {
     @Override
     public Object callback(ImageProxy imageProxy, Object[] params) {
         // code goes here
-        @SuppressLint("UnsafeOptInUsageError") Image image = imageProxy.getImage();
-        if (image == null) {
-            // Image Proxy is empty!
-            return null;
-        }
+        // @SuppressLint("UnsafeOptInUsageError") Image image = imageProxy.getImage();
+        // if (image == null) {
+        //     // Image Proxy is empty!
+        //     return null;
+        // }
 
-        Bitmap bitmap = Bitmap.createBitmap(image.getWidth(), image.getHeight(), Bitmap.Config.ARGB_8888);
-        encodeBitmapImage(bitmap);
-        imageToURL();
+        // Bitmap bitmap = Bitmap.createBitmap(image.getWidth(), image.getHeight(), Bitmap.Config.ARGB_8888);
+        // encodeBitmapImage(bitmap);
+        // imageToURL();
 
-        return result;
+        // return result;
+        // return imageProxy.getFormat();
+        return "hei, u catch me";
     }
 
     ColorFrameProcessorPlugin() {

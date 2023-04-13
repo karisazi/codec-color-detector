@@ -17,7 +17,8 @@ import {
     useFrameProcessor,
   } from 'react-native-vision-camera';
 import {Svg, Defs, Rect, Mask} from "react-native-svg";
-import Label, {Orientation} from "react-native-label";
+
+import { detectColor } from '../../frame-processors/detectColor';
 
 import {
     IconButton,
@@ -42,7 +43,6 @@ const Realtime = ({ navigation }) => {
 
     const [color, setColor] = React.useState("")
 
-    console.debug(detectButtonClicked);
     // Camera
     const devices = useCameraDevices();
     const device = devices.back;
@@ -74,12 +74,6 @@ const Realtime = ({ navigation }) => {
     }, [])
 
 
-    function detectColor(frame) {
-        'worklet';
-        return __detectColor(frame);
-      }
-
-
     const frameProcessor = useFrameProcessor(
         frame => {
           'worklet';
@@ -88,6 +82,7 @@ const Realtime = ({ navigation }) => {
             return;
           }
           const result = detectColor(frame);
+          console.log(`Return Values: ${JSON.stringify(result)}`);
 
           if (result == null) {
             return;
@@ -129,7 +124,7 @@ const Realtime = ({ navigation }) => {
                         ...FONTS.h2
                     }}
                 >
-                    {selectedOption == constants.detect_color_option.realtime ? "Realtime" : "Dokumen"}
+                    {selectedOption == constants.detect_color_option.realtime ? "Realtime" : "Daftar Warna"}
                 </Text>
 
                 {/* Add. options */}
@@ -184,7 +179,7 @@ const Realtime = ({ navigation }) => {
                 />
 
                 <TextButton
-                    label="Dokumen"
+                    label="Daftar Warna"
                     contentContainerStyle={{
                         flex: 1,
                         height: 50,
@@ -294,7 +289,8 @@ const Realtime = ({ navigation }) => {
                                 fontSize:20
                             }}
                         >
-                                {color} Ketan 
+                                {/* {color} Ketan  */}
+                                Biru
                         </Text>
                         
                     </MotiView>
@@ -327,7 +323,7 @@ const Realtime = ({ navigation }) => {
                                 iconStyle={{
                                     width: 65,
                                     height: 65,
-                                    tintColor: COLORS.primary
+                                    // tintColor: COLORS.primary
                                 }}
                                 onPress={() => {
                                     setDetectButtonClicked(true)
@@ -339,7 +335,6 @@ const Realtime = ({ navigation }) => {
                                     }, 3000)
                                 }}
                             />
-                            {/* <CameraFrame/> */}
 
                         </View>
                         
