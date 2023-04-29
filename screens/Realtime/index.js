@@ -1,23 +1,21 @@
 import React from 'react';
-import 'react-native-reanimated';
+import * as REA from 'react-native-reanimated';
 import {
     View,
     Text,
     Image,
     TouchableOpacity,
+    SafeAreaView,
     Linking
 } from 'react-native';
 import { MotiView, useAnimationState } from 'moti';
 import {
     Camera,
-    CameraProps,
-    CameraRuntimeError,
-    FrameProcessorPerformanceSuggestion,
     useCameraDevices,
     useFrameProcessor,
   } from 'react-native-vision-camera';
 import {Svg, Defs, Rect, Mask} from "react-native-svg";
-
+import ImagePicker from 'react-native-image-crop-picker';
 import { detectColor } from '../../frame-processors/detectColor';
 
 import {
@@ -41,11 +39,14 @@ const Realtime = ({ navigation }) => {
 
     const [detectButtonClicked, setDetectButtonClicked] = React.useState(false)
 
-    const [color, setColor] = React.useState("")
-
     // Camera
     const devices = useCameraDevices();
     const device = devices.back;
+
+    const [color, setColor] = React.useState("")
+    const [docImage, setDocImage] = React.useState("https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Purple_website.svg/1200px-Purple_website.svg.png")
+    const URL ="https://codecapp.pythonanywhere.com/predict-imagefile" 
+
 
     // Moti
     const loaderAnimationState = useAnimationState({
@@ -54,8 +55,9 @@ const Realtime = ({ navigation }) => {
         },
         stop: {
             opacity: 0
-        }
+        }   
     })
+
 
     React.useEffect(() => {
         // Animation
@@ -82,19 +84,23 @@ const Realtime = ({ navigation }) => {
             return;
           }
           const result = detectColor(frame);
-          console.log(`Return Values: ${JSON.stringify(result)}`);
 
           if (result == null) {
             return;
           }
-          setColor(result)
+        //   const col = JSON.stringify(result)
+          REA.runOnJS(setColor)(result)
+          REA.runOnJS(setColor)(result)
+        //   color.value = col
+          REA.runOnJS(setDetectButtonClicked)(false)
+          console.log(`Return Values: ${JSON.stringify(result)} button: `, detectButtonClicked);
 
         },
         [detectButtonClicked],
       );
       
-    // Render
 
+    // Render
     function renderHeader() {
         return (
 
@@ -124,7 +130,7 @@ const Realtime = ({ navigation }) => {
                         ...FONTS.h2
                     }}
                 >
-                    {selectedOption == constants.detect_color_option.realtime ? "Realtime" : "Daftar Warna"}
+                    {selectedOption == constants.detect_color_option.realtime ? "Realtime" : "Dokumen"}
                 </Text>
 
                 {/* Add. options */}
@@ -179,7 +185,7 @@ const Realtime = ({ navigation }) => {
                 />
 
                 <TextButton
-                    label="Daftar Warna"
+                    label="Dokumen"
                     contentContainerStyle={{
                         flex: 1,
                         height: 50,
@@ -191,9 +197,10 @@ const Realtime = ({ navigation }) => {
                         ...FONTS.h3,
                         color: selectedOption == constants.detect_color_option.document ? COLORS.secondary : COLORS.primary
                     }}
-                    onPress={() => {
-                        setSelectedOption(constants.detect_color_option.document)
-                    }}
+                    onPress={choosePhotoFromLibrary}
+                    // onPress={() => {
+                    //     setSelectedOption(constants.detect_color_option.document)
+                    // }}
                 />
             </View>
         )
@@ -245,6 +252,94 @@ const Realtime = ({ navigation }) => {
         )
     }
 
+    const choosePhotoFromLibrary = () => {
+        ImagePicker.openPicker({
+          width: 300,
+          height: 300,
+          cropping: true,
+          freeStyleCropEnabled: true
+        }).then(image => {
+          console.log(image);
+          setSelectedOption(constants.detect_color_option.document)
+          setDocImage(image)
+        });
+      }
+
+    uploadImage = async (image_uri) => {
+        const formdata=new FormData()
+        formdata.append('imagefile', {
+          uri: image_uri.path,
+          type: image_uri.mime,
+          name: "uploadimagetmp.jpeg"
+        })
+        let res = await fetch(
+          URL,
+          {
+              method: 'post',
+              body: formdata,
+              headers: {
+                  'Content-Type': 'multipart/form-data'
+              },
+          }
+        );
+        let responseJson = await res.json();
+        console.log(responseJson, "responseJson")
+        checkColor(responseJson.color)
+        // setColor(responseJson.color)
+
+    }
+
+    checkColor=(param)=>{
+ 
+        switch(param) {
+     
+          case 'black':
+            setColor("Hitam");
+            break;
+          
+          case 'white':
+            setColor("Putih");
+            break;
+     
+          case 'red':
+            setColor("Merah");
+            break;
+     
+          case 'blue':
+            setColor("Biru");
+            break;
+
+          case 'yellow':
+            setColor("Kuning");
+            break;
+
+          case 'green':
+            setColor("Hijau");
+            break;
+          
+          case 'violet':
+            setColor("Ungu");
+            break;
+     
+          case 'brown':
+            setColor("Coklat");
+            break;
+     
+          case 'grey':
+            setColor("abu-abu");
+            break;
+
+          case 'orange':
+            setColor("Orange");
+            break;
+     
+          default:
+            setColor("tunggu sebentar..");
+        
+          }
+     
+      }
+
     function renderCamera() {
         if (device == null) {
             return (
@@ -267,7 +362,7 @@ const Realtime = ({ navigation }) => {
                         isActive={true}
                         enableZoomGesture
                         frameProcessor={frameProcessor}
-                        frameProcessorFps={5}
+                        frameProcessorFps={100}
                     />
 
                     {/* Display color  */}
@@ -281,22 +376,31 @@ const Realtime = ({ navigation }) => {
                             right: 0
                         }}
                     >
-                        <Text 
-                            style={{
-                                backgroundColor: 'blue', 
-                                marginLeft:10, alignSelf: 'flex-start', 
-                                color: "white", 
-                                fontSize:20
-                            }}
-                        >
-                                {/* {color} Ketan  */}
-                                Biru
-                        </Text>
+                            <View>
+                                <TouchableOpacity 
+                                    style={{
+                                            flex: 0,
+                                            backgroundColor: '#fff',
+                                            borderRadius: 5,
+                                            padding: 7,
+                                            paddingHorizontal: 20,
+                                            alignSelf: 'center',
+                                            margin: 20
+                                    }}
+                                    activeOpacity={.7}
+                                    >
+                                    <Text 
+                                    style={{fontSize: 30, color:"red"}}>{color}
+                                    </Text>
+                                </TouchableOpacity>
+                            </View>
+                        {/* </View> */}
+                        {/* </SafeAreaView> */}
                         
                     </MotiView>
 
 
-                    {/* Detect Button  */}
+                    {/* Realtime section  */}
                     {selectedOption == constants.detect_color_option.realtime &&
        
                         <View
@@ -327,18 +431,75 @@ const Realtime = ({ navigation }) => {
                                 }}
                                 onPress={() => {
                                     setDetectButtonClicked(true)
-                                    setColor("cek")
                                     loaderAnimationState.transitionTo("start")
 
                                     setTimeout(() => {
                                         loaderAnimationState.transitionTo("stop")
-                                    }, 3000)
+                                    }, 2000)
                                 }}
                             />
 
                         </View>
                         
                     }
+
+
+                    {/* Document Section */}
+                    {selectedOption == constants.detect_color_option.document &&
+       
+                        <View
+                            style={{
+                                position: 'absolute',
+                                alignItems: 'center',
+                                bottom: SIZES.padding,
+                                left: 0,
+                                right: 0
+                            }}
+                        >
+                            <Image
+                                source={{uri: docImage.path}}
+                                style={{
+                                    marginTop: 70,
+                                    height: 250,
+                                    width: 250,
+                                    borderRadius: 20,
+                                    borderWidth: 2,
+                                    borderColor: 'black',
+                                    marginBottom: 30
+                                }}
+                            />
+
+                            <TextButton
+                                label="Deteksi Warna"
+                                contentContainerStyle={{
+                                    flex: 1,
+                                    height: 50,
+                                    paddingHorizontal: 15,
+                                    marginLeft: SIZES.radius,
+                                    borderRadius: SIZES.radius/2,
+                                    backgroundColor: COLORS.dark
+                                }}
+                                labelStyle={{
+                                    ...FONTS.h3,
+                                    color: selectedOption == constants.detect_color_option.document ? COLORS.secondary : COLORS.primary
+                                }}
+                                onPress={() => {
+                                    uploadImage(docImage)
+                                    loaderAnimationState.transitionTo("start")
+
+                                    setTimeout(() => {
+                                        loaderAnimationState.transitionTo("stop")
+                                    }, 2000)
+                                }
+                            }
+                            
+                            />
+
+                        </View>
+                        
+                    }
+
+
 
                 </View>
             )

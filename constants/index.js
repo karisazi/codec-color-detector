@@ -12,5 +12,5 @@ export {
     images,
     icons,
     lightTheme,
-    darkTheme,
+    darkTheme
 }

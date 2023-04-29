@@ -68,10 +68,22 @@ const detect_color_option = {
     document: "DOCUMENT"
 }
 
+const camera_type = {
+    back: "BACK",
+    front: "FRONT"
+}
+
+const flash_mode = {
+    off: "OFF",
+    on: "ON"
+}
+
 export default {
     walkthrough,
     home_tabs,
     dashboard_screens,
     bottom_tabs,
-    detect_color_option
+    detect_color_option,
+    camera_type,
+    flash_mode
 }
