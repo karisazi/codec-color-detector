@@ -4,7 +4,9 @@ import { NavigationContainer } from '@react-navigation/native';
 
 import {
     Welcome,
-    Realtime
+    Realtime,
+    Listwarna,
+    Support
 } from "./screens";
 
 const Stack = createStackNavigator();
@@ -19,6 +21,8 @@ const App = () => {
                 initialRouteName={'Welcome'}
             >
                 <Stack.Screen name="Welcome" component={Welcome} />
+                <Stack.Screen name="Listwarna" component={Listwarna} />
+                <Stack.Screen name="Support" component={Support} />
                 <Stack.Screen name="Realtime" component={Realtime} />
 
             </Stack.Navigator>

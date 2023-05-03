@@ -17,6 +17,7 @@ import {
 import {Svg, Defs, Rect, Mask} from "react-native-svg";
 import ImagePicker from 'react-native-image-crop-picker';
 import { detectColor } from '../../frame-processors/detectColor';
+import Sound from 'react-native-sound';
 
 import {
     IconButton,
@@ -47,6 +48,8 @@ const Realtime = ({ navigation }) => {
     const [docImage, setDocImage] = React.useState("https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Purple_website.svg/1200px-Purple_website.svg.png")
     const URL ="https://codecapp.pythonanywhere.com/predict-imagefile" 
 
+    let color_sound;
+
 
     // Moti
     const loaderAnimationState = useAnimationState({
@@ -66,6 +69,14 @@ const Realtime = ({ navigation }) => {
         // Permission
         requestCameraPermission()
     }, [])
+
+    React.useEffect(() => {
+        playSound(color)
+
+        setTimeout(() => {
+            stopSound()
+        }, 2500)
+    }, [color])
 
     //Handler
 
@@ -135,11 +146,12 @@ const Realtime = ({ navigation }) => {
 
                 {/* Add. options */}
                 <IconButton
-                    icon={icons.flash}
+                    icon={icons.color}
                     iconStyle={{
                         width: 25,
                         height: 25
                     }}
+                    onPress={() => navigation.navigate("Listwarna")}
                 />
 
                 <IconButton
@@ -151,6 +163,7 @@ const Realtime = ({ navigation }) => {
                         width: 25,
                         height: 25
                     }}
+                    onPress={() => navigation.navigate("Support")}
                 />
             </View>
         )
@@ -337,8 +350,145 @@ const Realtime = ({ navigation }) => {
             setColor("tunggu sebentar..");
         
           }
-     
+    
       }
+
+    const playSound = (Warna) => {
+        switch(Warna) {
+          case 'Hitam':
+            color_sound = new Sound (require('../../assets/audio/hitam.mp3') , (error, _sound) => {
+                if (error) {
+                    alert('error' + error.message);
+                    return;
+                }
+                color_sound.play(() => {
+                    color_sound.release();
+                });
+            });
+            break;
+          
+          case 'Putih':
+            color_sound = new Sound (require('../../assets/audio/putih.mp3') , (error, _sound) => {
+                if (error) {
+                    alert('error' + error.message);
+                    return;
+                }
+                color_sound.play(() => {
+                    color_sound.release();
+                });
+            });
+            break;
+     
+          case 'Merah':
+            color_sound = new Sound (require('../../assets/audio/merah.mp3') , (error, _sound) => {
+                if (error) {
+                    alert('error' + error.message);
+                    return;
+                }
+                color_sound.play(() => {
+                    color_sound.release();
+                });
+            });
+            break;
+     
+          case 'Orange':
+            color_sound = new Sound (require('../../assets/audio/orange.mp3') , (error, _sound) => {
+                if (error) {
+                    alert('error' + error.message);
+                    return;
+                }
+                color_sound.play(() => {
+                    color_sound.release();
+                });
+            });
+            break;
+
+          case 'Kuning':
+            color_sound = new Sound (require('../../assets/audio/kuning.mp3') , (error, _sound) => {
+                if (error) {
+                    alert('error' + error.message);
+                    return;
+                }
+                color_sound.play(() => {
+                    color_sound.release();
+                });
+            });
+            break;
+
+          case 'Hijau':
+            color_sound = new Sound (require('../../assets/audio/hijau.mp3') , (error, _sound) => {
+                if (error) {
+                    alert('error' + error.message);
+                    return;
+                }
+                color_sound.play(() => {
+                    color_sound.release();
+                });
+            });
+            break;
+          
+          case 'Biru':
+            color_sound = new Sound (require('../../assets/audio/biru.mp3') , (error, _sound) => {
+                if (error) {
+                    alert('error' + error.message);
+                    return;
+                }
+                color_sound.play(() => {
+                    color_sound.release();
+                });
+            });
+            break;
+     
+          case 'Ungu':
+            color_sound = new Sound (require('../../assets/audio/ungu.mp3') , (error, _sound) => {
+                if (error) {
+                    alert('error' + error.message);
+                    return;
+                }
+                color_sound.play(() => {
+                    color_sound.release();
+                });
+            });
+            break;
+     
+          case 'Coklat':
+            color_sound = new Sound (require('../../assets/audio/coklat.mp3') , (error, _sound) => {
+                if (error) {
+                    alert('error' + error.message);
+                    return;
+                }
+                color_sound.play(() => {
+                    color_sound.release();
+                });
+            });
+            break;
+
+          case 'Abu-abu':
+            color_sound = new Sound (require('../../assets/audio/abu.mp3') , (error, _sound) => {
+                if (error) {
+                    alert('error' + error.message);
+                    return;
+                }
+                color_sound.play(() => {
+                    color_sound.release();
+                });
+            });
+            break;
+     
+          default:
+            setColor("tunggu sebentar..");
+
+
+        }
+    }
+
+    const stopSound = () => {
+        if (color_sound) {
+            color_sound.stop(() => {
+                console.log('Stop audio');
+        });
+    }
+    }
 
     function renderCamera() {
         if (device == null) {
@@ -412,7 +562,10 @@ const Realtime = ({ navigation }) => {
                                 right: 0
                             }}
                         >
-                            <CameraFrame/>
+                            {/* kotak objek */}
+                            <CameraFrame/> 
+
+                            {/* tombol deteksi */}
                             <IconButton
                                 icon={icons.detect}
                                 containerStyle={{
@@ -426,16 +579,18 @@ const Realtime = ({ navigation }) => {
                                 }}
                                 iconStyle={{
                                     width: 65,
-                                    height: 65,
-                                    // tintColor: COLORS.primary
+                                    height: 65
                                 }}
                                 onPress={() => {
                                     setDetectButtonClicked(true)
                                     loaderAnimationState.transitionTo("start")
+                                    // playSound(color)
 
                                     setTimeout(() => {
                                         loaderAnimationState.transitionTo("stop")
-                                    }, 2000)
+                                        // stopSound()
+                                    }, 2500)
+
                                 }}
                             />
 
@@ -486,10 +641,14 @@ const Realtime = ({ navigation }) => {
                                 onPress={() => {
                                     uploadImage(docImage)
                                     loaderAnimationState.transitionTo("start")
+                                    // playSound(color)
 
                                     setTimeout(() => {
                                         loaderAnimationState.transitionTo("stop")
-                                    }, 2000)
+                                        // stopSound()
+                                    }, 2500)
+
+                                    
                                 }
                             }
                             
@@ -498,8 +657,6 @@ const Realtime = ({ navigation }) => {
                         </View>
                         
                     }
-
-
 
                 </View>
             )
