@@ -4,10 +4,10 @@ import { NavigationContainer } from '@react-navigation/native';
 
 import {
     Welcome,
-    Realtime,
+    ColorDetection,
     Listwarna,
     Support
-} from "./screens";
+} from "./src/screens";
 
 const Stack = createStackNavigator();
 
@@ -23,7 +23,7 @@ const App = () => {
                 <Stack.Screen name="Welcome" component={Welcome} />
                 <Stack.Screen name="Listwarna" component={Listwarna} />
                 <Stack.Screen name="Support" component={Support} />
-                <Stack.Screen name="Realtime" component={Realtime} />
+                <Stack.Screen name="ColorDetection" component={ColorDetection} />
 
             </Stack.Navigator>
         </NavigationContainer>

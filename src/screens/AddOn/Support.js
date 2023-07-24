@@ -6,7 +6,7 @@ import {
 } from 'react-native';
 
 import { TextButton } from "../../components";
-import { COLORS, FONTS, SIZES, images } from '../../constants';
+import { COLORS, FONTS, SIZES, icons } from '../../constants';
 
 const Support = ({ navigation }) => {
     return (
@@ -25,7 +25,7 @@ const Support = ({ navigation }) => {
                 }}
             >
                 <Image
-                    source={images.logo}
+                    source={icons.logo}
                     style={{
                         marginTop: 100,
                         width: 100,
@@ -71,7 +71,7 @@ const Support = ({ navigation }) => {
                         borderRadius: SIZES.radius
                     }}
                     label="Kembali"
-                    onPress={() => navigation.navigate("Realtime")}
+                    onPress={() => navigation.navigate("ColorDetection")}
                 />
 
             </View>

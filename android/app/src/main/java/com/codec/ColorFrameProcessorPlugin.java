@@ -80,45 +80,12 @@ public class ColorFrameProcessorPlugin extends FrameProcessorPlugin {
                             try {
                                 JSONObject jsonObject = new JSONObject(response);
                                 String data = jsonObject.getString("color");
-                                switch (data) {
-                                    case "black":
-                                        result = "Hitam";
-                                        break;
-                                    case "white":
-                                        result = "Putih";
-                                        break;
-                                    case "red":
-                                        result = "Merah";
-                                        break;
-                                    case "orange":
-                                        result = "Orange";
-                                        break;
-                                    case "yellow":
-                                        result = "Kuning";
-                                        break;
-                                    case "green":
-                                        result = "Hijau";
-                                        break;
-                                    case "blue":
-                                        result = "Biru";
-                                        break;
-                                    case "violet":
-                                        result = "Ungu";
-                                        break;
-                                    case "brown":
-                                        result = "Coklat";
-                                        break;
-                                    case "grey":
-                                        result = "Abu-abu";
-                                        break;
-                                    default:
-                                        result = "tunggu sebentar..";
-                                }
+                                result = data;
                             } catch (JSONException e) {
                                 e.printStackTrace();
 }
 
-                        }
+                        } 
                     },
                     new Response.ErrorListener() {
                         @Override

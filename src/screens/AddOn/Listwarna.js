@@ -4,7 +4,7 @@ import {data} from '../../constants/data';
 import Card from '../../components/Card';
 
 import { TextButton } from "../../components";
-import { COLORS, FONTS, SIZES, images } from '../../constants';
+import { COLORS, FONTS, SIZES } from '../../constants';
 
 const Listwarna = ({navigation}) => {
 
@@ -51,7 +51,7 @@ const Listwarna = ({navigation}) => {
                         borderRadius: SIZES.radius
                     }}
                     label="Kembali"
-                    onPress={() => navigation.navigate("Realtime")}
+                    onPress={() => navigation.navigate("ColorDetection")}
                 />
 
             </View>

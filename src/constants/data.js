@@ -1,14 +1,14 @@
 const Images = [
-    {image: require('../assets/images/hitam.jpg')},
-    {image: require('../assets/images/putih.jpg')},
-    {image: require('../assets/images/merah.jpg')},
-    {image: require('../assets/images/orange.jpg')},
-    {image: require('../assets/images/kuning.jpg')},
-    {image: require('../assets/images/hijau.jpg')},
-    {image: require('../assets/images/biru.jpg')},
-    {image: require('../assets/images/ungu.jpg')},
-    {image: require('../assets/images/coklat.jpg')},
-    {image: require('../assets/images/abu.jpg')},
+    {image: require('../../assets/images/hitam.jpg')},
+    {image: require('../../assets/images/putih.jpg')},
+    {image: require('../../assets/images/merah.jpg')},
+    {image: require('../../assets/images/orange.jpg')},
+    {image: require('../../assets/images/kuning.jpg')},
+    {image: require('../../assets/images/hijau.jpg')},
+    {image: require('../../assets/images/biru.jpg')},
+    {image: require('../../assets/images/ungu.jpg')},
+    {image: require('../../assets/images/coklat.jpg')},
+    {image: require('../../assets/images/abu.jpg')},
   ];
   
   export const data = [

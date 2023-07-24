@@ -6,7 +6,7 @@ import {
 } from 'react-native';
 
 import { TextButton } from "../../components";
-import { COLORS, FONTS, SIZES, images } from '../../constants';
+import { COLORS, FONTS, SIZES, icons } from '../../constants';
 
 const Welcome = ({ navigation }) => {
     return (
@@ -25,7 +25,7 @@ const Welcome = ({ navigation }) => {
                 }}
             >
                 <Image
-                    source={images.logo}
+                    source={icons.logo}
                     style={{
                         width: 150,
                         height: 150
@@ -53,7 +53,7 @@ const Welcome = ({ navigation }) => {
                         borderRadius: SIZES.radius
                     }}
                     label="Mulai"
-                    onPress={() => navigation.navigate("Realtime")}
+                    onPress={() => navigation.navigate("ColorDetection")}
                 />
 
             </View>
