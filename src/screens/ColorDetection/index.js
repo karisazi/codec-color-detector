@@ -1,25 +1,19 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
-import Reanimated, {
-    interpolate,
+import Animated, {
     runOnJS,
-    useAnimatedProps,
-    useAnimatedStyle,
-    useDerivedValue,
     useSharedValue,
-    useWorkletCallback,
-    withSpring,
   } from 'react-native-reanimated';
 import {
     View,
     Text,
     Image,
     TouchableOpacity,
-    SafeAreaView,
-    REA,
     Linking,
-    StyleSheet
+    AppState,
+    StyleSheet,
+    Button,
+    Modal,
 } from 'react-native';
-import {TapGestureHandler} from 'react-native-gesture-handler';
 import { MotiView, useAnimationState } from 'moti';
 import {
     Camera,
@@ -29,7 +23,6 @@ import {
 import {Svg, Defs, Rect, Mask} from "react-native-svg";
 import ImagePicker from 'react-native-image-crop-picker';
 import { detectColor } from '../../utils/detectColor';
-// import {hapticFeedback} from '../../hapticFeedback utils/hapticFeedback';
 import Sound from 'react-native-sound';
 
 import {
@@ -45,10 +38,45 @@ import {
 } from "../../constants";
 
 
-const ReanimatedCamera = Reanimated.createAnimatedComponent(Camera);
-Reanimated.addWhitelistedNativeProps({
+const ReanimatedCamera = Animated.createAnimatedComponent(Camera);
+Animated.addWhitelistedNativeProps({
   isActive: true,
 });
+
+const ModalPopup = ({visible, children}) => {
+    const [showModal, setShowModal] = React.useState(visible);
+    const scaleValue = React.useRef(new Animated.Value(0)).current;
+    React.useEffect(() => {
+      toggleModal();
+    }, [visible]);
+    const toggleModal = () => {
+      if (visible) {
+        setShowModal(true);
+        Animated.spring(scaleValue, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: true,
+        }).start();
+      } else {
+        setTimeout(() => setShowModal(false), 200);
+        Animated.timing(scaleValue, {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: true,
+        }).start();
+      }
+    };
+    return (
+      <Modal transparent visible={showModal}>
+        <View style={styles.modalBackGround}>
+          <Animated.View
+            style={[styles.modalContainer, {transform: [{scale: scaleValue}]}]}>
+            {children}
+          </Animated.View>
+        </View>
+      </Modal>
+    );
+  };
 
 const MAX_FRAME_PROCESSOR_FPS = 3;
 
@@ -57,7 +85,7 @@ const ColorDetection = ({ navigation }) => {
     // State
     const [selectedOption, setSelectedOption] = React.useState(constants.detect_color_option.realtime)
 
-    const [detectButtonClicked, setDetectButtonClicked] = React.useState(false)
+    const [modalVisible, setModalVisible] = React.useState(false);
 
     // Camera
     const colorAnimationDuration = useMemo(
@@ -72,7 +100,8 @@ const ColorDetection = ({ navigation }) => {
     const devices = useCameraDevices('wide-angle-camera');
     const device = devices.back;
 
-    const [color, setColor] = React.useState("")
+    const [colorRealtime, setColorRealtime] = React.useState("")
+    const [colorDoc, setColorDoc] = React.useState("")
     const [docImage, setDocImage] = React.useState("https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Purple_website.svg/1200px-Purple_website.svg.png")
     const URL ="https://codecapp.pythonanywhere.com/predict-imagefile" 
 
@@ -106,21 +135,25 @@ const ColorDetection = ({ navigation }) => {
     }, [])
 
     React.useEffect(() => {
-        console.log(color)
-        // loaderAnimationState.transitionTo("start")
-        // // playSound(color)
+        console.log(colorRealtime)
 
-        // setTimeout(() => {
-        //     loaderAnimationState.transitionTo("stop")
-        //     // stopSound()
-        // }, 1000)
+        playSound(colorRealtime)
 
-        // playSound(color)
+        setTimeout(() => {
+            stopSound()
+        }, 2500)
 
-        // setTimeout(() => {
-        //     stopSound()
-        // }, 2500)
-    }, [color])
+    }, [colorRealtime])
+
+    React.useEffect(() => {
+        console.log(colorDoc)
+
+        playSound(colorDoc)
+
+        setTimeout(() => {
+            stopSound()
+        }, 2500)
+    }, [colorDoc])
 
     //Handler
 
@@ -134,74 +167,40 @@ const ColorDetection = ({ navigation }) => {
     const frameProcessor = useFrameProcessor(
         frame => {
           'worklet';
-        //   if (isHolding.value) {
-        //     // handbrake
-        //     return;
-        //   }
-          if (detectButtonClicked == false) {
-            // handbrake
-            return;
-          }
+          
           const result = detectColor(frame);
 
           if (result == null) {
             return;
           }
-        //   const col = JSON.stringify(result)
-          runOnJS(setColor)(result)
-          runOnJS(setColor)(result)
-        //   color.value = col
-        
-          runOnJS(setDetectButtonClicked)(false)
-          console.log(`Return Values: ${JSON.stringify(result)} button: `, detectButtonClicked);
+          runOnJS(setColorRealtime)(result)
 
         },
-        // [isHolding],
-        [detectButtonClicked],
+        [isHolding],
       );
     
     
-    // const onTapBegin = useWorkletCallback(() => {
-    //     isHolding.value = true;
-    //     runOnJS(hapticFeedback)('selection');
-    // }, [isHolding]);
-    // const onTapEnd = useWorkletCallback(() => {
-    //     isHolding.value = false;
-    // }, [isHolding]);
+ 
 
+    const onFrameProcessorPerformanceSuggestionAvailable = useCallback(
+        ( FrameProcessorPerformanceSuggestion) => {
+        const newFps = Math.min(
+            FrameProcessorPerformanceSuggestion,
+            MAX_FRAME_PROCESSOR_FPS,
+        );
+        setFrameProcessorFps(newFps);
+        },
+        [],
+    );
 
-    // const cameraAnimatedProps = useAnimatedProps<CameraProps>(
-    //     () => ({
-    //     isActive: !isHolding.value && isPageActive.value,
-    //     }),
-    //     [isHolding, isPageActive]
-    // );
-
-    // const onFrameProcessorPerformanceSuggestionAvailable = useCallback(
-    //     ( FrameProcessorPerformanceSuggestion) => {
-    //     const newFps = Math.min(
-    //         FrameProcessorPerformanceSuggestion,
-    //         MAX_FRAME_PROCESSOR_FPS,
-    //     );
-    //     setFrameProcessorFps(newFps);
-    //     },
-    //     [],
-    // );
-
-    // useEffect(() => {
-    //     const listener = AppState.addEventListener('change', state => {
-    //     isPageActive.value = state === 'active';
-    //     });
-    //     return () => {
-    //     listener.remove();
-    //     };
-    // }, [isPageActive, isHolding]);
-
-    // if (device == null) {
-    //     return <View style={styles.blackscreen} />;
-    // }
-
-    // console.log(`Camera Device: ${device.name}`);
+    useEffect(() => {
+        const listener = AppState.addEventListener('change', state => {
+        isPageActive.value = state === 'active';
+        });
+        return () => {
+        listener.remove();
+        };
+    }, [isPageActive, isHolding]);
    
 
     function renderCamera() {
@@ -220,49 +219,102 @@ const ColorDetection = ({ navigation }) => {
                         flex: 1
                     }}
                 >
-                    <Camera
+                    {selectedOption == constants.detect_color_option.realtime &&
+                    <ReanimatedCamera
                         style={{ flex: 1}}
                         device={device}
-                        isActive={true}
-                        enableZoomGesture
+                        isActive={true} 
                         frameProcessor={frameProcessor}
-                        frameProcessorFps={200}
+                        onError={onCameraError}
+                        onInitialized={onCameraInitialized}
+                        enableZoomGesture
+                        frameProcessorFps={frameProcessorFps}
                     />
+                    }
 
-                    {/* Display color  */}
-                    <MotiView
-                        state={loaderAnimationState}
-                        style={{
-                            position: 'absolute',
-                            alignItems: 'center',
-                            top: SIZES.padding,
-                            left: 0,
-                            right: 0
-                        }}
-                    >
-                            <View>
-                                <TouchableOpacity 
-                                    style={{
-                                            flex: 0,
-                                            backgroundColor: '#fff',
-                                            borderRadius: 5,
-                                            padding: 7,
-                                            paddingHorizontal: 20,
-                                            alignSelf: 'center',
-                                            margin: 20
-                                    }}
-                                    activeOpacity={.7}
-                                    >
-                                    <Text 
-                                    style={{fontSize: 30, color:"red"}}>{color}
-                                    </Text>
-                                </TouchableOpacity>
-                            </View>
-                        {/* </View> */}
-                        {/* </SafeAreaView> */}
+                        {/* Display color  */}
+                        <MotiView
+                            style={{
+                                position: 'absolute',
+                                alignItems: 'center',
+                                top: SIZES.padding,
+                                left: 0,
+                                right: 0
+                            }}
+                            animationDuration={colorAnimationDuration}
+                        >
+                            <ModalPopup visible={modalVisible}>
+                                <View style={{alignItems: 'center'}}>
+                                <View style={styles.header}>
+                                    <TouchableOpacity onPress={() => setVisible(false)}>
+                                    <Image
+                                        // source={require('./assets/x.png')}
+                                        style={{height: 30, width: 30}}
+                                    />
+                                    </TouchableOpacity>
+                                </View>
+                                </View>
+                                <View style={{alignItems: 'center'}}>
+                                <Image
+                                    // source={require('../../../assets/ico')}
+                                    style={{height: 150, width: 150, marginVertical: 10}}
+                                />
+                                </View>
+
+                                <Text style={{marginVertical: 30, fontSize: 20, textAlign: 'center'}}>
+                                Congratulations registration was successful
+                                </Text>
+                            </ModalPopup>
+
+                            {/* Realtime Color  */}
+                            {selectedOption == constants.detect_color_option.realtime &&
+                                <View>
+                                    <TouchableOpacity 
+                                        style={{
+                                                flex: 0,
+                                                backgroundColor: '#fff',
+                                                borderRadius: 5,
+                                                padding: 7,
+                                                paddingHorizontal: 20,
+                                                alignSelf: 'center',
+                                                margin: 20
+                                        }}
+                                        activeOpacity={.7}
+                                        animationDuration={colorAnimationDuration}
+                                        onPress={() => setModalVisible(true)}
+                                        >
+                                        <Text 
+                                        style={{fontSize: 30, color:"red"}}>{colorRealtime}
+                                        </Text>
+                                    </TouchableOpacity>
+                                </View>
+                         }
                         
-                    </MotiView>
+                        {/* Document Color  */}
+                        {selectedOption == constants.detect_color_option.document &&
 
+                                    <View>
+                                        <TouchableOpacity 
+                                            style={{
+                                                    flex: 0,
+                                                    backgroundColor: '#fff',
+                                                    borderRadius: 5,
+                                                    padding: 7,
+                                                    paddingHorizontal: 20,
+                                                    alignSelf: 'center',
+                                                    margin: 20
+                                            }}
+                                            activeOpacity={.7}
+                                            animationDuration={colorAnimationDuration}
+                                            >
+                                            <Text 
+                                            style={{fontSize: 30, color:"red"}}>{colorDoc}
+                                            </Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                }
+                            
+                        </MotiView>
 
                     {/* Realtime section  */}
                     {selectedOption == constants.detect_color_option.realtime &&
@@ -271,39 +323,24 @@ const ColorDetection = ({ navigation }) => {
                             style={{
                                 position: 'absolute',
                                 alignItems: 'center',
+                                top:200,
                                 bottom: SIZES.padding*9,
                                 left: 0,
                                 right: 0
                             }}
                         >
+                        
                             {/* kotak objek */}
                             <CameraFrame/> 
 
-                            {/* tombol deteksi */}
-                            <IconButton
-                                icon={icons.detect}
+                            <TouchableOpacity
                                 containerStyle={{
                                     top: 140,
                                     height: 57,
                                     width: 57,
                                     borderRadius: 30,
                                     alignItems: 'center',
-                                    justifyContent: 'center',
-                                    backgroundColor: COLORS.light
-                                }}
-                                iconStyle={{
-                                    width: 65,
-                                    height: 65
-                                }}
-                                onPress={() => {
-                                    setDetectButtonClicked(true)
-                                    loaderAnimationState.transitionTo("start")
-                                    // playSound(color)
-
-                                    setTimeout(() => {
-                                        loaderAnimationState.transitionTo("stop")
-                                        // stopSound()
-                                    }, 2500)
+                                    justifyContent: 'center'
                                 }}
                             />
                         </View>
@@ -323,6 +360,8 @@ const ColorDetection = ({ navigation }) => {
                                 right: 0
                             }}
                         >
+
+
                             <Image
                                 source={{uri: docImage.path}}
                                 style={{
@@ -344,51 +383,54 @@ const ColorDetection = ({ navigation }) => {
                                 }}
                             >
 
-                                <TextButton
-                                    label="Pilih Gambar"
-                                    contentContainerStyle={{
-                                        marginLeft: 0,
-                                        width: '30%',
-                                        height: 40,
-                                        borderRadius: SIZES.radius/2,
-                                        backgroundColor: COLORS.dark
+
+                                 <View
+                                style={{
+                                    marginHorizontal: 20,
+                                    flexDirection: 'column',
+                                    justifyContent: 'space-between'
+                                }}
+                            >
+
+
+                                <IconButton
+                                    icon={icons.book_open}
+                                    containerStyle={{
+                                        marginLeft: 0
                                     }}
-                                    labelStyle={{
-                                        ...FONTS.h3,
-                                        color: selectedOption == constants.detect_color_option.document ? COLORS.secondary : COLORS.primary
+                                    iconStyle={{
+                                        width: 50,
+                                        height: 50
                                     }}
                                     onPress={choosePhotoFromLibrary}
-                                
                                 />
+                                <Text>Pilih Gambar</Text>
+                                </View>
 
-                                <TextButton
-                                    label="Deteksi Warna"
-                                    contentContainerStyle={{
-                                        marginLeft: SIZES.radius,
-                                        width: '30%',
-                                        height: 40,
-                                        borderRadius: SIZES.radius/2,
-                                        backgroundColor: COLORS.dark
+                                <View
+                                style={{
+                                    marginHorizontal: 20,
+                                    flexDirection: 'column',
+                                    justifyContent: 'space-between'
+                                }}
+                            >
+
+                                <IconButton
+                                    icon={icons.search_fill}
+                                    containerStyle={{
+                                        marginLeft: SIZES.base
                                     }}
-                                    labelStyle={{
-                                        ...FONTS.h3,
-                                        color: selectedOption == constants.detect_color_option.document ? COLORS.secondary : COLORS.primary
+                                    iconStyle={{
+                                        width: 50,
+                                        height: 50
                                     }}
                                     onPress={() => {
-                                        uploadImage(docImage)
-                                        loaderAnimationState.transitionTo("start")
-                                        // playSound(color)
-
-                                        setTimeout(() => {
-                                            loaderAnimationState.transitionTo("stop")
-                                            // stopSound()
-                                        }, 2500)
-
-                                        
-                                    }
-                                }
-                                
+                                        uploadImage(docImage)}}
                                 />
+                                <Text>Deteksi Warna</Text>
+                                </View>
+
+
                             </View>
                         </View> 
                     }
@@ -496,7 +538,6 @@ const ColorDetection = ({ navigation }) => {
                         ...FONTS.h3,
                         color: selectedOption == constants.detect_color_option.document ? COLORS.secondary : COLORS.primary
                     }}
-                    // onPress={choosePhotoFromLibrary}
                     onPress={() => {
                         setSelectedOption(constants.detect_color_option.document)
                     }}
@@ -545,7 +586,7 @@ const ColorDetection = ({ navigation }) => {
                     width="20"
                     height="20"
                     strokeWidth="3"
-                    stroke="#000"
+                    stroke="#fff"
                     fillOpacity="0"
                 />
             </Svg>
@@ -584,7 +625,7 @@ const ColorDetection = ({ navigation }) => {
         );
         let responseJson = await res.json();
         console.log(responseJson, "responseJson")
-        setColor(responseJson.color)
+        setColorDoc(responseJson.color)
 
     }
 
@@ -711,7 +752,8 @@ const ColorDetection = ({ navigation }) => {
             break;
      
           default:
-            setColor("Wait..");
+            setColorRealtime("Warna");
+            setColorDoc("Warna");
 
 
         }
@@ -745,17 +787,29 @@ const ColorDetection = ({ navigation }) => {
     )
 }
 
+
 const styles = StyleSheet.create({
-    container: {
+    modalBackGround: {
       flex: 1,
+      backgroundColor: 'rgba(0,0,0,0.5)',
+      justifyContent: 'center',
+      alignItems: 'center',
     },
-    blackscreen: {
-      flex: 1,
-      backgroundColor: 'black',
+    modalContainer: {
+      width: '80%',
+      backgroundColor: 'white',
+      paddingHorizontal: 20,
+      paddingVertical: 30,
+      borderRadius: 20,
+      elevation: 20,
     },
-    camera: {
-      flex: 1,
+    header: {
+      width: '100%',
+      height: 40,
+      alignItems: 'flex-end',
+      justifyContent: 'center',
     },
   });
+
 
 export default ColorDetection;

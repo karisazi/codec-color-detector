@@ -8,7 +8,7 @@ const clock = require('../../assets/icons/clock.png');
 const close = require('../../assets/icons/close.png');
 const credit_card = require('../../assets/icons/credit_card.png');
 const cube = require('../../assets/icons/cube.png');
-const email = require('../../assets/icons/email.png');
+const doc = require('../../assets/icons/doc.png');
 const fire_fill = require('../../assets/icons/fire_fill.png');
 const flash = require('../../assets/icons/flash.png');
 const eye = require('../../assets/icons/eye.png');
@@ -44,7 +44,7 @@ export default {
     close,
     credit_card,
     cube,
-    email,
+    doc,
     fire_fill,
     flash,
     eye,
