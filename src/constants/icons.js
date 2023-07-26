@@ -30,10 +30,12 @@ const phone = require('../../assets/icons/phone.png');
 const question_mark = require('../../assets/icons/question_mark.png');
 const detect = require('../../assets/icons/detect.png');
 const color = require('../../assets/icons/color.png');
-const logo = require('../../assets/images/logo.jpg')
+const logo = require('../../assets/images/logo.jpg');
+const popup = require('../../assets/images/popup.png');
 
 
 export default {
+    popup,
     arrow_down_fill,
     arrow_left,
     arrow_right_up,

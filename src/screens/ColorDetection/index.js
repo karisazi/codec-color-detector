@@ -9,10 +9,7 @@ import {
     Image,
     TouchableOpacity,
     Linking,
-    AppState,
-    StyleSheet,
-    Button,
-    Modal,
+    AppState
 } from 'react-native';
 import { MotiView, useAnimationState } from 'moti';
 import {
@@ -24,6 +21,7 @@ import {Svg, Defs, Rect, Mask} from "react-native-svg";
 import ImagePicker from 'react-native-image-crop-picker';
 import { detectColor } from '../../utils/detectColor';
 import Sound from 'react-native-sound';
+import Modal from "react-native-modal";
 
 import {
     IconButton,
@@ -37,50 +35,40 @@ import {
     constants
 } from "../../constants";
 
+var path_merah = '../../../assets/images/merah.jpg';
+var path_jingga = '../../../assets/images/orange.jpg';
+var path_kuning = '../../../assets/images/kuning.jpg';
+var path_hijau = '../../../assets/images/hijau.jpg';
+var path_biru = '../../../assets/images/biru.jpg';
+var path_ungu = '../../../assets/images/ungu.jpg';
+var path_hitam = '../../../assets/images/hitam.jpg';
+var path_abu = '../../../assets/images/abu.jpg';
+var path_putih = '../../../assets/images/putih.jpg';
+var path_coklat = '../../../assets/images/coklat.jpg';
+
+var color_desc = {
+    "Merah": `Warna ini seringkali dijumpai pada mawar, apel, darah, dan lain-lain.`,
+    "Jingga":`Warna ini seringkali dijumpai pada jeruk, wortel, dan lain-lain.`,
+    "Kuning": `Warna ini seringkali dijumpai pada matahari, pisang, nanas, dan lain-lain.`,
+    "Hijau": `Warna ini seringkali dijumpai pada daun, lumut, rumput, dan lain-lain.`,
+    "Biru": `Warna ini seringkali dijumpai pada langit, laut, batu, dan lain-lain.`,
+    "Ungu": `Warna ini seringkali dijumpai pada anggur, terong, dan lain-lain.`,
+    "Hitam": `Warna ini seringkali dijumpai pada roda, arang, dan lain-lain.`, 
+    'Abu-abu': `Warna ini seringkali dijumpai pada batu, gajah, dan lain-lain.`,
+    "Putih": `Warna ini seringkali dijumpai pada nasi, lampu, tisu, awan, dan lain-lain.`,
+    "Coklat": `Warna ini seringkali dijumpai pada kopi, kayu, kardus, dan lain-lain.`};
 
 const ReanimatedCamera = Animated.createAnimatedComponent(Camera);
 Animated.addWhitelistedNativeProps({
   isActive: true,
 });
 
-const ModalPopup = ({visible, children}) => {
-    const [showModal, setShowModal] = React.useState(visible);
-    const scaleValue = React.useRef(new Animated.Value(0)).current;
-    React.useEffect(() => {
-      toggleModal();
-    }, [visible]);
-    const toggleModal = () => {
-      if (visible) {
-        setShowModal(true);
-        Animated.spring(scaleValue, {
-          toValue: 1,
-          duration: 300,
-          useNativeDriver: true,
-        }).start();
-      } else {
-        setTimeout(() => setShowModal(false), 200);
-        Animated.timing(scaleValue, {
-          toValue: 0,
-          duration: 300,
-          useNativeDriver: true,
-        }).start();
-      }
-    };
-    return (
-      <Modal transparent visible={showModal}>
-        <View style={styles.modalBackGround}>
-          <Animated.View
-            style={[styles.modalContainer, {transform: [{scale: scaleValue}]}]}>
-            {children}
-          </Animated.View>
-        </View>
-      </Modal>
-    );
-  };
+
 
 const MAX_FRAME_PROCESSOR_FPS = 3;
 
 const ColorDetection = ({ navigation }) => {
+
 
     // State
     const [selectedOption, setSelectedOption] = React.useState(constants.detect_color_option.realtime)
@@ -100,8 +88,13 @@ const ColorDetection = ({ navigation }) => {
     const devices = useCameraDevices('wide-angle-camera');
     const device = devices.back;
 
+    const [colorIndex, setColorIndex] = React.useState(null)
+    const [colorDesired, setColorDesired] = React.useState("")
+    const [imageDesired, setImageDesired] = React.useState("")
     const [colorRealtime, setColorRealtime] = React.useState("")
     const [colorDoc, setColorDoc] = React.useState("")
+    const [color, setColor] = React.useState("")
+    const [desc, setDesc] = React.useState("")
     const [docImage, setDocImage] = React.useState("https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Purple_website.svg/1200px-Purple_website.svg.png")
     const URL ="https://codecapp.pythonanywhere.com/predict-imagefile" 
 
@@ -135,7 +128,7 @@ const ColorDetection = ({ navigation }) => {
     }, [])
 
     React.useEffect(() => {
-        console.log(colorRealtime)
+        // console.log(colorRealtime)
 
         playSound(colorRealtime)
 
@@ -146,7 +139,7 @@ const ColorDetection = ({ navigation }) => {
     }, [colorRealtime])
 
     React.useEffect(() => {
-        console.log(colorDoc)
+        // console.log(colorDoc)
 
         playSound(colorDoc)
 
@@ -154,6 +147,22 @@ const ColorDetection = ({ navigation }) => {
             stopSound()
         }, 2500)
     }, [colorDoc])
+
+    React.useEffect(() => {
+
+        playSound(colorDoc)
+
+        setTimeout(() => {
+            stopSound()
+        }, 2500)
+    }, [color])
+
+    React.useEffect(() => {
+
+        translateColor(colorDesired)
+        console.log(imageDesired)
+    }, [colorDesired])
+
 
     //Handler
 
@@ -174,6 +183,7 @@ const ColorDetection = ({ navigation }) => {
             return;
           }
           runOnJS(setColorRealtime)(result)
+          runOnJS(setColor)(result)
 
         },
         [isHolding],
@@ -214,11 +224,13 @@ const ColorDetection = ({ navigation }) => {
             )
         } else {
             return (
+                
                 <View
                     style={{
                         flex: 1
                     }}
                 >
+
                     {selectedOption == constants.detect_color_option.realtime &&
                     <ReanimatedCamera
                         style={{ flex: 1}}
@@ -242,29 +254,8 @@ const ColorDetection = ({ navigation }) => {
                                 right: 0
                             }}
                             animationDuration={colorAnimationDuration}
+                            
                         >
-                            <ModalPopup visible={modalVisible}>
-                                <View style={{alignItems: 'center'}}>
-                                <View style={styles.header}>
-                                    <TouchableOpacity onPress={() => setVisible(false)}>
-                                    <Image
-                                        // source={require('./assets/x.png')}
-                                        style={{height: 30, width: 30}}
-                                    />
-                                    </TouchableOpacity>
-                                </View>
-                                </View>
-                                <View style={{alignItems: 'center'}}>
-                                <Image
-                                    // source={require('../../../assets/ico')}
-                                    style={{height: 150, width: 150, marginVertical: 10}}
-                                />
-                                </View>
-
-                                <Text style={{marginVertical: 30, fontSize: 20, textAlign: 'center'}}>
-                                Congratulations registration was successful
-                                </Text>
-                            </ModalPopup>
 
                             {/* Realtime Color  */}
                             {selectedOption == constants.detect_color_option.realtime &&
@@ -281,12 +272,17 @@ const ColorDetection = ({ navigation }) => {
                                         }}
                                         activeOpacity={.7}
                                         animationDuration={colorAnimationDuration}
-                                        onPress={() => setModalVisible(true)}
+                                        onPress={() => {
+                                            setColorDesired(color)
+                                            setModalVisible(!modalVisible)
+                                        }}
                                         >
                                         <Text 
                                         style={{fontSize: 30, color:"red"}}>{colorRealtime}
                                         </Text>
                                     </TouchableOpacity>
+
+                                    
                                 </View>
                          }
                         
@@ -315,6 +311,8 @@ const ColorDetection = ({ navigation }) => {
                                 }
                             
                         </MotiView>
+
+
 
                     {/* Realtime section  */}
                     {selectedOption == constants.detect_color_option.realtime &&
@@ -434,6 +432,54 @@ const ColorDetection = ({ navigation }) => {
                             </View>
                         </View> 
                     }
+                            <Modal isVisible={modalVisible}>
+                                <View 
+                                    style={{
+                                        backgroundColor: '#FFFFFF', 
+                                        paddingVertical: 20, 
+                                        paddingHorizontal: 20,
+                                        justifyContent:'center', 
+                                        alignItems:'center',
+                                        borderRadius: 6}}>
+
+                                    <View style={{
+                                            width: '100%',
+                                            height: 40,
+                                            alignItems: 'flex-end',
+                                            justifyContent: 'center',
+                                    }}>
+                                        <TouchableOpacity onPress={() => setModalVisible(false)}>
+                                        <Image
+                                            source={icons.close}
+                                            style={{height: 30, width: 30}}
+                                        />
+                                        </TouchableOpacity>
+                                    </View>
+                                {colorDesired == "Merah" &&
+                                    <Image source={require(path_merah)} style={{width:80, height:80}}/>}
+                                {colorDesired == "Jingga" &&
+                                    <Image source={require(path_jingga)} style={{width:80, height:80}}/>}
+                                {colorDesired == "Kuning" &&
+                                    <Image source={require(path_kuning)} style={{width:80, height:80}}/>}
+                                {colorDesired == "Hijau" &&
+                                    <Image source={require(path_hijau)} style={{width:80, height:80}}/>}
+                                {colorDesired == "Biru" &&
+                                    <Image source={require(path_biru)} style={{width:80, height:80}}/>}
+                                {colorDesired == "Ungu" &&
+                                    <Image source={require(path_ungu)} style={{width:80, height:80}}/>}
+                                {colorDesired == "Hitam" &&
+                                    <Image source={require(path_hitam)} style={{width:80, height:80}}/>}
+                                {colorDesired == "Abu-abu" &&
+                                    <Image source={require(path_abu)} style={{width:80, height:80}}/>}
+                                {colorDesired == "Putih" &&
+                                    <Image source={require(path_putih)} style={{width:80, height:80}}/>}
+                                {colorDesired == "Coklat" &&
+                                    <Image source={require(path_coklat)} style={{width:80, height:80}}/>}
+
+                                <Text style={{fontWeight: 'bold', marginTop: 15, fontSize: 22, color:'#272727'}}>Warna {colorDesired}</Text>
+                                <Text style={{marginTop:10, fontSize:15}}>{color_desc[colorDesired]}</Text>
+                                </View>
+                            </Modal>
                 </View>
             )
         }
@@ -626,6 +672,7 @@ const ColorDetection = ({ navigation }) => {
         let responseJson = await res.json();
         console.log(responseJson, "responseJson")
         setColorDoc(responseJson.color)
+        setColor((responseJson.color))
 
     }
 
@@ -667,7 +714,7 @@ const ColorDetection = ({ navigation }) => {
             });
             break;
      
-          case 'Orange':
+          case 'Jingga':
             color_sound = new Sound (require('../../../assets/audio/orange.mp3') , (error, _sound) => {
                 if (error) {
                     alert('error' + error.message);
@@ -752,8 +799,8 @@ const ColorDetection = ({ navigation }) => {
             break;
      
           default:
-            setColorRealtime("Warna");
-            setColorDoc("Warna");
+            setColorRealtime(null);
+            setColorDoc(null);
 
 
         }
@@ -764,8 +811,59 @@ const ColorDetection = ({ navigation }) => {
             color_sound.stop(() => {
                 console.log('Stop audio');
         });
-    }
-    }
+    }}
+
+    translateColor=(param)=>{
+ 
+        switch(param) {
+     
+          case 'Hitam':
+            setImageDesired("black");
+            break;
+          
+          case 'Putih': 
+            setImageDesired("white");
+            break;
+     
+          case 'Merah': 
+            setColor("red");
+            break;
+     
+          case 'blue':
+            setColor("Biru");
+            break;
+
+          case 'yellow':
+            setColor("Kuning");
+            break;
+
+          case 'green':
+            setColor("Hijau");
+            break;
+          
+          case 'violet':
+            setColor("Ungu");
+            break;
+     
+          case 'brown':
+            setColor("Coklat");
+            break;
+     
+          case 'grey':
+            setColor("abu-abu");
+            break;
+
+          case 'orange':
+            setColor("Orange");
+            break;
+     
+          default:
+            setColor("tunggu sebentar..");
+        
+          }
+    
+      }
+
 
 
 
@@ -787,29 +885,13 @@ const ColorDetection = ({ navigation }) => {
     )
 }
 
+jewelStyle = function(myColor) {
+    return {
+      borderRadius: 10,
+      background: myColor,
+    }
+  }
 
-const styles = StyleSheet.create({
-    modalBackGround: {
-      flex: 1,
-      backgroundColor: 'rgba(0,0,0,0.5)',
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-    modalContainer: {
-      width: '80%',
-      backgroundColor: 'white',
-      paddingHorizontal: 20,
-      paddingVertical: 30,
-      borderRadius: 20,
-      elevation: 20,
-    },
-    header: {
-      width: '100%',
-      height: 40,
-      alignItems: 'flex-end',
-      justifyContent: 'center',
-    },
-  });
 
 
 export default ColorDetection;

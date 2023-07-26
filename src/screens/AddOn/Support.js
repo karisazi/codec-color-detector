@@ -21,7 +21,7 @@ const Support = ({ navigation }) => {
                 style={{
                     flex: 1,
                     alignItems: 'center',
-                    justifyContent: 'center'
+                    justifyContent: 'center',
                 }}
             >
                 <Image
@@ -33,25 +33,25 @@ const Support = ({ navigation }) => {
                     }}
                 />
 
-                <Text style={{ marginTop: SIZES.padding, ...FONTS.h1 }}>
+                <Text style={{ marginTop: SIZES.padding, ...FONTS.largeTitle }}>
                     Codec
                 </Text>
-                <Text style={{ marginTop: SIZES.base, ...FONTS.h4, marginHorizontal: 20 }}>
-                    Codec adalah aplikasi yang digunakan untuk membantu penderita buta warna dalam mengetahui warna sebenarnya dari suatu objek yang memberikan keluaran warna berupa teks dan suara
+                <Text style={{ marginTop: SIZES.base, ...FONTS.body4, textAlign: 'justify', marginHorizontal: 30}}>
+                    Codec adalah aplikasi ramah penderita buta warna untuk mengetahui warna sebenarnya dari suatu objek dengan keluaran warna berupa teks dan suara
                 </Text>
 
                 <Text style={{ marginTop: SIZES.padding-10, ...FONTS.h2 }}>
                     Fitur Realtime
                 </Text>
-                <Text style={{ marginTop: SIZES.base/5, ...FONTS.h6, marginHorizontal:18 }}>
-                    Pengguna dapat memanfaatkan fitur realtime dengan mengarahkan area kotak hitam ke titik objek yang diinginkan dan kemudian menekan tombol deteksi
+                <Text style={{ marginTop: SIZES.base/5, ...FONTS.body5, textAlign: 'justify' , marginHorizontal: 30 }}>
+                    Pengguna dapat memanfaatkan fitur realtime dengan mengarahkan area kotak target ke titik objek yang ingin diketahui warnanya
                 </Text>
 
                 <Text style={{ marginTop: SIZES.padding/2, ...FONTS.h2 }}>
                     Fitur Dokumen
                 </Text>
-                <Text style={{ marginTop: SIZES.base/5, ...FONTS.h6, marginHorizontal: 20 }}>
-                    Pengguna dapat memanfaatkan fitur dokumen dengan menekan tombol dokumen untuk memilih gambar yang diinginkan dan melakukan crop pada area titik objek yang ingin diketahui warnanya
+                <Text style={{ marginTop: SIZES.base/5, ...FONTS.body5, textAlign: 'justify', marginHorizontal: 30 }}>
+                    Pengguna dapat memanfaatkan fitur dokumen dengan menekan tombol "Pilih Gambar" untuk memilih gambar yang diinginkan dan melakukan crop pada area titik objek yang ingin diketahui warnanya
                 </Text>
             </View>
 
