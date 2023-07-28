@@ -407,7 +407,7 @@ const ColorDetection = ({ navigation }) => {
                                     }}
                                     onPress={choosePhotoFromLibrary}
                                 />
-                                <Text>Pilih Gambar</Text>
+                                <Text style={{color:"black"}}>Pilih Gambar</Text>
                                 </View>
 
                                 <View
@@ -430,7 +430,7 @@ const ColorDetection = ({ navigation }) => {
                                     onPress={() => {
                                         uploadImage(docImage)}}
                                 />
-                                <Text>Deteksi Warna</Text>
+                                <Text style={{color:"black"}}>Deteksi Warna</Text>
                                 </View>
 
 
