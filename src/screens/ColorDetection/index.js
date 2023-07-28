@@ -61,6 +61,7 @@ var color_desc = {
 const ReanimatedCamera = Animated.createAnimatedComponent(Camera);
 Animated.addWhitelistedNativeProps({
   isActive: true,
+  zoom: true
 });
 
 
@@ -278,7 +279,7 @@ const ColorDetection = ({ navigation }) => {
                                         }}
                                         >
                                         <Text 
-                                        style={{fontSize: 30, color:"red"}}>{colorRealtime}
+                                        style={{fontSize: 30, fontFamily:"Poppins-Black", color:"black"}}>{colorRealtime}
                                         </Text>
                                     </TouchableOpacity>
 
@@ -302,9 +303,13 @@ const ColorDetection = ({ navigation }) => {
                                             }}
                                             activeOpacity={.7}
                                             animationDuration={colorAnimationDuration}
+                                            onPress={() => {
+                                            setColorDesired(colorDoc)
+                                            setModalVisible(!modalVisible)
+                                        }}
                                             >
                                             <Text 
-                                            style={{fontSize: 30, color:"red"}}>{colorDoc}
+                                            style={{fontSize: 30, fontFamily:"Poppins-Black", color:"black"}}>{colorDoc}
                                             </Text>
                                         </TouchableOpacity>
                                     </View>
