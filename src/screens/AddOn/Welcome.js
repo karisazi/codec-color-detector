@@ -32,10 +32,10 @@ const Welcome = ({ navigation }) => {
                     }}
                 />
 
-                <Text style={{ marginTop: SIZES.padding, ...FONTS.h1 }}>
+                <Text style={{ color:"black", marginTop: SIZES.padding, ...FONTS.h1 }}>
                     Welcome to
                 </Text>
-                <Text style={{ marginTop: SIZES.base, ...FONTS.h1 }}>
+                <Text style={{ color:"black", marginTop: SIZES.base, ...FONTS.h1 }}>
                     Codec
                 </Text>
             </View>

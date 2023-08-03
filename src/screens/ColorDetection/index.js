@@ -89,13 +89,11 @@ const ColorDetection = ({ navigation }) => {
     const devices = useCameraDevices('wide-angle-camera');
     const device = devices.back;
 
-    const [colorIndex, setColorIndex] = React.useState(null)
     const [colorDesired, setColorDesired] = React.useState("")
     const [imageDesired, setImageDesired] = React.useState("")
     const [colorRealtime, setColorRealtime] = React.useState("")
     const [colorDoc, setColorDoc] = React.useState("")
     const [color, setColor] = React.useState("")
-    const [desc, setDesc] = React.useState("")
     const [docImage, setDocImage] = React.useState("https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Purple_website.svg/1200px-Purple_website.svg.png")
     const URL ="https://codecapp.pythonanywhere.com/predict-imagefile" 
 
@@ -148,21 +146,6 @@ const ColorDetection = ({ navigation }) => {
             stopSound()
         }, 2500)
     }, [colorDoc])
-
-    React.useEffect(() => {
-
-        playSound(colorDoc)
-
-        setTimeout(() => {
-            stopSound()
-        }, 2500)
-    }, [color])
-
-    React.useEffect(() => {
-
-        translateColor(colorDesired)
-        console.log(imageDesired)
-    }, [colorDesired])
 
 
     //Handler
@@ -482,7 +465,7 @@ const ColorDetection = ({ navigation }) => {
                                     <Image source={require(path_coklat)} style={{width:80, height:80}}/>}
 
                                 <Text style={{fontWeight: 'bold', marginTop: 15, fontSize: 22, color:'#272727'}}>Warna {colorDesired}</Text>
-                                <Text style={{marginTop:10, fontSize:15}}>{color_desc[colorDesired]}</Text>
+                                <Text style={{marginTop:10, fontSize:15, color:"black"}}>{color_desc[colorDesired]}</Text>
                                 </View>
                             </Modal>
                 </View>
@@ -516,6 +499,7 @@ const ColorDetection = ({ navigation }) => {
                 <Text
                     style={{
                         flex: 1,
+                        color:"black",
                         marginLeft: SIZES.radius,
                         ...FONTS.h2
                     }}
@@ -527,8 +511,8 @@ const ColorDetection = ({ navigation }) => {
                 <IconButton
                     icon={icons.color}
                     iconStyle={{
-                        width: 25,
-                        height: 25
+                        width: 23,
+                        height: 23
                     }}
                     onPress={() => navigation.navigate("Listwarna")}
                 />
@@ -720,7 +704,7 @@ const ColorDetection = ({ navigation }) => {
             break;
      
           case 'Jingga':
-            color_sound = new Sound (require('../../../assets/audio/orange.mp3') , (error, _sound) => {
+            color_sound = new Sound (require('../../../assets/audio/jingga.mp3') , (error, _sound) => {
                 if (error) {
                     alert('error' + error.message);
                     return;
@@ -817,59 +801,6 @@ const ColorDetection = ({ navigation }) => {
                 console.log('Stop audio');
         });
     }}
-
-    translateColor=(param)=>{
- 
-        switch(param) {
-     
-          case 'Hitam':
-            setImageDesired("black");
-            break;
-          
-          case 'Putih': 
-            setImageDesired("white");
-            break;
-     
-          case 'Merah': 
-            setColor("red");
-            break;
-     
-          case 'blue':
-            setColor("Biru");
-            break;
-
-          case 'yellow':
-            setColor("Kuning");
-            break;
-
-          case 'green':
-            setColor("Hijau");
-            break;
-          
-          case 'violet':
-            setColor("Ungu");
-            break;
-     
-          case 'brown':
-            setColor("Coklat");
-            break;
-     
-          case 'grey':
-            setColor("abu-abu");
-            break;
-
-          case 'orange':
-            setColor("Orange");
-            break;
-     
-          default:
-            setColor("tunggu sebentar..");
-        
-          }
-    
-      }
-
-
 
 
     return (
